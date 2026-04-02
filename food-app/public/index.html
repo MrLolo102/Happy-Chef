@@ -61,13 +61,15 @@
         <span class="cat-label">Món chay</span>
       </div>
     </div>
-    <div class="section-title">🎲 Gợi ý cho bạn</div>
+    <div class="section-title">Gợi ý cho bạn</div>
+    <div class="section-divider"></div>
     <div id="suggest-result"></div>
   </div>
 
   <!-- Tìm món -->
   <div id="search" class="page">
-    <div class="section-title">🔍 Tìm món từ nguyên liệu</div>
+    <div class="section-title">Tìm món từ nguyên liệu</div>
+    <div class="section-divider"></div>
     <div class="search-box">
       <input id="search-input" type="text" placeholder="Bạn có gì trong tủ lạnh? VD: thịt bò, tỏi...">
       <button class="btn btn-primary" onclick="searchFood()">Tìm</button>
@@ -80,11 +82,12 @@
 
   <!-- Vùng miền -->
   <div id="region" class="page">
-    <div class="section-title">🗺️ Khám phá ẩm thực vùng miền</div>
+    <div class="section-title">Khám phá ẩm thực vùng miền</div>
+    <div class="section-divider"></div>
     <div class="filter-tabs" id="region-tabs">
-      <button class="active" onclick="loadRegion('bắc',this)">🏔️ Miền Bắc</button>
-      <button onclick="loadRegion('trung',this)">🏖️ Miền Trung</button>
-      <button onclick="loadRegion('nam',this)">🌴 Miền Nam</button>
+      <button class="active" onclick="loadRegion('bắc',this)">Miền Bắc</button>
+      <button onclick="loadRegion('trung',this)">Miền Trung</button>
+      <button onclick="loadRegion('nam',this)">Miền Nam</button>
     </div>
     <div class="region-count" id="region-count"></div>
     <div id="region-result" class="card-grid"></div>
@@ -93,19 +96,22 @@
 
   <!-- Thực đơn -->
   <div id="menu" class="page">
-    <div class="section-title">📋 Thực đơn hôm nay</div>
+    <div class="section-title">Thực đơn hôm nay</div>
+    <div class="section-divider"></div>
     <div id="menu-list"></div>
   </div>
 
   <!-- Lịch sử -->
   <div id="history" class="page">
-    <div class="section-title">📅 Lịch sử tuần qua</div>
+    <div class="section-title">Lịch sử tuần qua</div>
+    <div class="section-divider"></div>
     <div id="history-list"></div>
   </div>
 
   <!-- Quản lý -->
   <div id="admin" class="page">
-    <div class="section-title">⚙ Quản lý món ăn</div>
+    <div class="section-title">Quản lý món ăn</div>
+    <div class="section-divider"></div>
     <div class="admin-toolbar">
       <div class="search-wrap">
         <input id="adm-search" type="text" placeholder="Tìm tên món hoặc nguyên liệu..." oninput="onAdmInput()" autocomplete="off">
