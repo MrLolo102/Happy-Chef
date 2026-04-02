@@ -76,16 +76,12 @@ router.delete("/foods/:id", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Upload ảnh
+// Upload ảnh - lưu base64 vào response (ảnh sẽ được lưu trong MongoDB qua field image)
 router.post("/upload", (req, res) => {
   const { data, filename } = req.body;
   if (!data || !filename) return res.status(400).json({ error: "Missing data" });
-  if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
-  const ext = path.extname(filename) || ".jpg";
-  const name = Date.now() + ext;
-  const base64 = data.replace(/^data:image\/\w+;base64,/, "");
-  fs.writeFileSync(path.join(UPLOAD_DIR, name), Buffer.from(base64, "base64"));
-  res.json({ url: "/uploads/" + name });
+  // Trả lại base64 data URL trực tiếp, sẽ được lưu vào MongoDB cùng food document
+  res.json({ url: data });
 });
 
 module.exports = router;
