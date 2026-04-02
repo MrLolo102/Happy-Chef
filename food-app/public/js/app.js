@@ -3,6 +3,7 @@ const SUGGEST_LABELS = ["🥩 Món mặn", "🥬 Món rau", "🍲 Canh / Kèm"];
 const REGION_NAMES = { "bắc": "Miền Bắc", "trung": "Miền Trung", "nam": "Miền Nam" };
 const PAGE_IDS = ["suggest", "search", "region", "menu", "history", "admin"];
 const ADM_PER_PAGE = 8;
+const LIST_PER_PAGE = 8;
 
 let todayMenu = JSON.parse(localStorage.getItem("todayMenu") || "[]");
 let pendingFood = null;
@@ -11,6 +12,10 @@ let editingId = null;
 let uploadedImageUrl = "";
 let admPage = 1;
 let admFiltered = [];
+let regionItems = [];
+let regionPage = 1;
+let searchItems = [];
+let searchPage = 1;
 
 function fid(f) { return f._id || f.id; }
 
@@ -136,22 +141,49 @@ async function searchFood() {
   const q = document.getElementById("search-input").value.trim(); if (!q) return;
   const r = await fetch("/api/search?q=" + encodeURIComponent(q)); const results = await r.json();
   const el = document.getElementById("search-result");
-  if (!results.length) { el.innerHTML = '<p style="color:#888">Không tìm thấy</p>'; return; }
-  const meat = results.filter(m => m.nutrition.some(n => ["protein","fat","iron","omega3","calcium"].includes(n)) && !m.tags.includes("canh") && !m.tags.includes("rau") && !m.tags.includes("kèm"));
-  const veg = results.filter(m => m.tags.some(t => ["rau","xào","nộm","kèm"].includes(t)) && !m.tags.includes("canh") && !meat.includes(m));
-  const soup = results.filter(m => m.tags.includes("canh"));
-  const col = (t, items) => `<div class="search-col"><h3 class="col-title">${t}</h3>${items.length ? items.map(m => renderCard(m)).join("") : '<p style="color:#555">Không có</p>'}</div>`;
-  el.innerHTML = col("🥩 Món thịt", meat) + col("🥬 Món rau", veg) + col("🍲 Canh", soup);
+  if (!results.length) { el.innerHTML = '<p style="color:#888">Không tìm thấy</p>'; document.getElementById("search-paging").innerHTML = ""; return; }
+  searchItems = results; searchPage = 1; renderSearchPage();
 }
+function renderSearchPage() {
+  const total = searchItems.length;
+  const totalPages = Math.max(1, Math.ceil(total / LIST_PER_PAGE));
+  if (searchPage > totalPages) searchPage = totalPages;
+  const start = (searchPage - 1) * LIST_PER_PAGE;
+  const items = searchItems.slice(start, start + LIST_PER_PAGE);
+  document.getElementById("search-count").textContent = `${total} kết quả · Trang ${searchPage}/${totalPages}`;
+  document.getElementById("search-result").innerHTML = items.map(m => renderCard(m)).join("");
+  document.getElementById("search-paging").innerHTML = totalPages > 1 ? renderPaging(searchPage, totalPages, "goSearchPage") : "";
+}
+function goSearchPage(pg) { searchPage = pg; renderSearchPage(); }
 document.getElementById("search-input").addEventListener("keydown", e => { if (e.key === "Enter") searchFood(); });
+
+function renderPaging(page, totalPages, goFn) {
+  let p = `<button ${page <= 1 ? "disabled" : ""} onclick="${goFn}(${page - 1})">‹</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages > 7 && Math.abs(i - page) > 2 && i !== 1 && i !== totalPages) { if (i === 2 || i === totalPages - 1) p += '<button disabled>…</button>'; continue; }
+    p += `<button class="${i === page ? 'active' : ''}" onclick="${goFn}(${i})">${i}</button>`;
+  }
+  p += `<button ${page >= totalPages ? "disabled" : ""} onclick="${goFn}(${page + 1})">›</button>`;
+  return p;
+}
 
 async function loadRegion(region, btn) {
   document.querySelectorAll("#region-tabs button").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
-  const r = await fetch("/api/region/" + encodeURIComponent(region)); const d = await r.json();
-  document.getElementById("region-count").textContent = `${d.length} món ${REGION_NAMES[region]}`;
-  document.getElementById("region-result").innerHTML = d.map(m => renderCard(m)).join("");
+  const r = await fetch("/api/region/" + encodeURIComponent(region)); regionItems = await r.json();
+  regionPage = 1; renderRegionPage();
 }
+function renderRegionPage() {
+  const total = regionItems.length;
+  const totalPages = Math.max(1, Math.ceil(total / LIST_PER_PAGE));
+  if (regionPage > totalPages) regionPage = totalPages;
+  const start = (regionPage - 1) * LIST_PER_PAGE;
+  const items = regionItems.slice(start, start + LIST_PER_PAGE);
+  document.getElementById("region-count").textContent = `${total} món · Trang ${regionPage}/${totalPages}`;
+  document.getElementById("region-result").innerHTML = items.map(m => renderCard(m)).join("");
+  document.getElementById("region-paging").innerHTML = totalPages > 1 ? renderPaging(regionPage, totalPages, "goRegionPage") : "";
+}
+function goRegionPage(pg) { regionPage = pg; renderRegionPage(); }
 
 // ========== Admin ==========
 async function loadAdmin() {
