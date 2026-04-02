@@ -136,7 +136,8 @@ function renderHistory() {
 // ========== Suggest / Search / Region ==========
 async function suggest() {
   const r = await fetch("/api/suggest"); const d = await r.json();
-  document.getElementById("suggest-result").innerHTML = d.map((m, i) => renderCard(m, SUGGEST_LABELS[i])).join("");
+  const section = (title, items) => items.filter(Boolean).length ? `<div class="suggest-section"><h3 class="suggest-group-title">${title}</h3><div class="card-grid">${items.filter(Boolean).map(m => renderCard(m)).join("")}</div></div>` : "";
+  document.getElementById("suggest-result").innerHTML = section("🥩 Món thịt", d.meat) + section("🍲 Canh", d.soup) + section("🥬 Món rau", d.veg);
 }
 async function searchFood() {
   const q = document.getElementById("search-input").value.trim(); if (!q) return;

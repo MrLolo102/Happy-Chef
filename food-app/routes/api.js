@@ -12,10 +12,26 @@ const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 router.get("/suggest", async (req, res) => {
   try {
     const foods = await Food.find().lean();
+    const fridgeItems = await Fridge.find().lean();
+    const fridgeNames = fridgeItems.map(i => i.name.toLowerCase());
+
     const main = foods.filter(f => f.nutrition.includes("protein") && !f.tags.includes("canh") && !f.tags.includes("rau") && !f.tags.includes("kèm") && !f.tags.includes("nộm"));
     const veg = foods.filter(f => f.tags.some(t => ["rau", "xào"].includes(t)) && f.nutrition.some(n => ["fiber", "vitamin", "vitamin A"].includes(n)));
     const soup = foods.filter(f => f.tags.includes("canh") || f.tags.includes("kèm"));
-    res.json([pick(main), pick(veg), pick(soup)]);
+
+    const score = (f) => f.ingredients.filter(i => fridgeNames.some(fn => i.toLowerCase().includes(fn) || fn.includes(i.toLowerCase()))).length;
+
+    const pickN = (arr, n) => {
+      if (!fridgeNames.length) {
+        const s = [...arr].sort(() => Math.random() - 0.5);
+        return s.slice(0, n);
+      }
+      const scored = arr.map(f => ({ ...f, _score: score(f) }));
+      scored.sort((a, b) => b._score - a._score || Math.random() - 0.5);
+      return scored.slice(0, n);
+    };
+
+    res.json({ meat: pickN(main, 3), soup: pickN(soup, 2), veg: pickN(veg, 3) });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

@@ -49,7 +49,9 @@ nav .tabs button.active { color: #4CAF50; border-bottom-color: #4CAF50; }
 /* === Suggest === */
 .suggest-btn { background: #fff; color: #4CAF50; border: 2px solid #fff; padding: 14px 40px; font-size: 1rem; border-radius: 4px; cursor: pointer; font-weight: 600; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
 .suggest-btn:hover { background: transparent; color: #fff; border-color: #fff; }
-#suggest-result { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+#suggest-result { margin-top: 24px; }
+.suggest-section { margin-bottom: 28px; }
+.suggest-group-title { font-size: 1rem; color: #4CAF50; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #E8F5E9; font-weight: 600; }
 
 /* === Cards === */
 .card { background: #fff; border: 1px solid #eee; overflow: hidden; cursor: pointer; transition: all 0.3s; position: relative; }
