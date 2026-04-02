@@ -166,6 +166,20 @@ nav .tabs button.active { color: #4CAF50; border-bottom-color: #4CAF50; }
 .pagination button.active { background: #4CAF50; color: white; border-color: #4CAF50; }
 .pagination button:disabled { opacity: 0.3; cursor: default; }
 
+/* === Fridge === */
+.fridge-add { display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.fridge-add input { background: #fff; border: 1px solid #ddd; color: #333; padding: 12px 18px; border-radius: 4px; font-size: 0.9rem; flex: 1; min-width: 160px; transition: border-color 0.2s; }
+.fridge-add input:focus { outline: none; border-color: #4CAF50; }
+.fridge-hint { color: #aaa; font-size: 0.8rem; margin-bottom: 16px; }
+.fridge-count { color: #999; font-size: 0.85rem; margin-bottom: 16px; }
+.fridge-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.fridge-item { background: #fff; border: 1px solid #eee; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 200px; flex: 0 0 auto; }
+.fridge-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.fridge-info { display: flex; flex-direction: column; gap: 2px; }
+.fridge-item-name { font-weight: 600; font-size: 0.9rem; color: #333; }
+.fridge-item-qty { font-size: 0.8rem; color: #4CAF50; }
+.fridge-actions button { padding: 6px 14px; font-size: 0.75rem; }
+
 /* === Responsive === */
 @media (max-width: 768px) {
   nav { padding: 0 16px; height: 56px; }

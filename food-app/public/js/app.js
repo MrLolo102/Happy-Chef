@@ -1,7 +1,7 @@
 const DEFAULT_IMG = "/img/default-food.svg";
 const SUGGEST_LABELS = ["🥩 Món mặn", "🥬 Món rau", "🍲 Canh / Kèm"];
 const REGION_NAMES = { "bắc": "Miền Bắc", "trung": "Miền Trung", "nam": "Miền Nam" };
-const PAGE_IDS = ["suggest", "search", "region", "menu", "history", "admin"];
+const PAGE_IDS = ["suggest", "search", "region", "menu", "history", "fridge", "admin"];
 const ADM_PER_PAGE = 8;
 const LIST_PER_PAGE = 8;
 
@@ -109,6 +109,7 @@ function showPage(id) {
   PAGE_IDS.forEach((n, i) => { if (n === id) btns[i].classList.add("active"); });
   if (id === "menu") renderMenu();
   if (id === "history") renderHistory();
+  if (id === "fridge") loadFridge();
   if (id === "admin") loadAdmin();
 }
 
@@ -315,6 +316,62 @@ async function saveFoodForm() {
 function editFood(id) { const f = allFoods.find(x => fid(x) === id); if (f) openFoodForm(f); }
 function viewFood(id) { const f = allFoods.find(x => fid(x) === id); if (f) showCook(f); }
 async function deleteFood(id) { if (!confirm("Xoá món này?")) return; await fetch("/api/foods/" + id, { method: "DELETE" }); loadAdmin(); }
+
+// ========== Fridge ==========
+let fridgeItems = [];
+
+async function loadFridge() {
+  try { const r = await fetch("/api/fridge"); fridgeItems = await r.json(); } catch (e) { fridgeItems = []; }
+  renderFridge();
+}
+
+function renderFridge() {
+  const el = document.getElementById("fridge-list");
+  const countEl = document.getElementById("fridge-count");
+  const sugBtn = document.getElementById("fridge-suggest-btn");
+  countEl.textContent = `${fridgeItems.length} nguyên liệu trong tủ lạnh`;
+  sugBtn.style.display = fridgeItems.length ? "block" : "none";
+  if (!fridgeItems.length) { el.innerHTML = '<p class="menu-empty">Tủ lạnh trống. Thêm nguyên liệu sau khi đi chợ nhé!</p>'; return; }
+  el.innerHTML = '<div class="fridge-grid">' + fridgeItems.map(item => `
+    <div class="fridge-item">
+      <div class="fridge-info">
+        <span class="fridge-item-name">${item.name}</span>
+        ${item.quantity ? `<span class="fridge-item-qty">${item.quantity}</span>` : ""}
+      </div>
+      <div class="fridge-actions">
+        <button class="btn btn-danger" onclick="removeFridgeItem('${item._id}')">Xoá</button>
+      </div>
+    </div>`).join("") + '</div>';
+}
+
+async function addFridgeItem() {
+  const nameInput = document.getElementById("fridge-name");
+  const qtyInput = document.getElementById("fridge-qty");
+  const raw = nameInput.value.trim();
+  const qty = qtyInput.value.trim();
+  if (!raw) return;
+  const names = raw.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+  const items = names.map(n => ({ name: n, quantity: names.length === 1 ? qty : "" }));
+  await fetch("/api/fridge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items }) });
+  nameInput.value = ""; qtyInput.value = "";
+  loadFridge();
+}
+
+async function removeFridgeItem(id) {
+  await fetch("/api/fridge/" + id, { method: "DELETE" });
+  loadFridge();
+}
+
+async function suggestFromFridge() {
+  const q = fridgeItems.map(i => i.name).join(",");
+  const r = await fetch("/api/search?q=" + encodeURIComponent(q));
+  const results = await r.json();
+  const el = document.getElementById("fridge-suggest-result");
+  if (!results.length) { el.innerHTML = '<p style="color:#888;text-align:center;margin-top:16px">Không tìm thấy món phù hợp</p>'; return; }
+  el.innerHTML = '<div class="section-title" style="margin-top:24px">Món có thể nấu</div><div class="section-divider"></div><div class="card-grid">' + results.slice(0, 8).map(m => renderCard(m)).join("") + '</div>';
+}
+
+document.getElementById("fridge-name").addEventListener("keydown", e => { if (e.key === "Enter") addFridgeItem(); });
 
 // ========== Init ==========
 updateMenuCount();

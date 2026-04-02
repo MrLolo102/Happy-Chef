@@ -15,6 +15,7 @@
       <button onclick="showPage('region')">Vùng miền</button>
       <button onclick="showPage('menu')">Thực đơn<span class="badge" id="menu-count" style="display:none">0</span></button>
       <button onclick="showPage('history')">Lịch sử</button>
+      <button onclick="showPage('fridge')">Tủ lạnh</button>
       <button onclick="showPage('admin')">Quản lý</button>
     </div>
   </nav>
@@ -106,6 +107,22 @@
     <div class="section-title">Lịch sử tuần qua</div>
     <div class="section-divider"></div>
     <div id="history-list"></div>
+  </div>
+
+  <!-- Tủ lạnh -->
+  <div id="fridge" class="page">
+    <div class="section-title">Tủ lạnh của tôi</div>
+    <div class="section-divider"></div>
+    <div class="fridge-add">
+      <input id="fridge-name" type="text" placeholder="Tên nguyên liệu (VD: thịt bò, cà chua...)">
+      <input id="fridge-qty" type="text" placeholder="Số lượng (VD: 500g, 2 quả...)">
+      <button class="btn btn-primary" onclick="addFridgeItem()">+ Thêm</button>
+    </div>
+    <p class="fridge-hint">Nhập nhiều nguyên liệu cách nhau bằng dấu phẩy để thêm nhanh</p>
+    <div class="fridge-count" id="fridge-count"></div>
+    <div id="fridge-list"></div>
+    <button class="btn btn-primary" id="fridge-suggest-btn" style="display:none;margin:20px auto;display:none" onclick="suggestFromFridge()">🍳 Gợi ý món từ tủ lạnh</button>
+    <div id="fridge-suggest-result"></div>
   </div>
 
   <!-- Quản lý -->
