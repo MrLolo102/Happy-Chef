@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hôm nay ăn gì?</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">🍚 Ăn gì?</div>
+    <div class="tabs" id="nav-tabs">
+      <button class="active" onclick="showPage('suggest')">Trang chủ</button>
+      <button onclick="showPage('search')">Tìm món</button>
+      <button onclick="showPage('region')">Vùng miền</button>
+      <button onclick="showPage('menu')">Thực đơn<span class="badge" id="menu-count" style="display:none">0</span></button>
+      <button onclick="showPage('history')">Lịch sử</button>
+      <button onclick="showPage('admin')">Quản lý</button>
+    </div>
+  </nav>
+
+  <!-- Trang chủ / Gợi ý -->
+  <div id="suggest" class="page active">
+    <div class="banner">
+      <h1>Hôm nay ăn gì? 🤔</h1>
+      <p>Để mình gợi ý bữa ăn đủ chất cho bạn nhé</p>
+      <button class="suggest-btn" onclick="suggest()">✨ Gợi ý ngay</button>
+      <div class="emoji">🍳</div>
+    </div>
+    <div class="categories">
+      <div class="cat-item" onclick="showPage('search')">
+        <div class="cat-icon" style="background:#fff3e0">🔍</div>
+        <span class="cat-label">Tìm món</span>
+      </div>
+      <div class="cat-item" onclick="showPage('region')">
+        <div class="cat-icon" style="background:#e8f5e9">🗺️</div>
+        <span class="cat-label">Vùng miền</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('thịt')">
+        <div class="cat-icon" style="background:#fce4ec">🥩</div>
+        <span class="cat-label">Món thịt</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('rau')">
+        <div class="cat-icon" style="background:#e8f5e9">🥬</div>
+        <span class="cat-label">Món rau</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('canh')">
+        <div class="cat-icon" style="background:#e3f2fd">🍲</div>
+        <span class="cat-label">Canh</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('xào')">
+        <div class="cat-icon" style="background:#fff8e1">🍳</div>
+        <span class="cat-label">Món xào</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('nhanh')">
+        <div class="cat-icon" style="background:#f3e5f5">⚡</div>
+        <span class="cat-label">Nấu nhanh</span>
+      </div>
+      <div class="cat-item" onclick="quickFilter('chay')">
+        <div class="cat-icon" style="background:#e0f7fa">🌿</div>
+        <span class="cat-label">Món chay</span>
+      </div>
+    </div>
+    <div class="section-title">🎲 Gợi ý cho bạn</div>
+    <div id="suggest-result"></div>
+  </div>
+
+  <!-- Tìm món -->
+  <div id="search" class="page">
+    <div class="section-title">🔍 Tìm món từ nguyên liệu</div>
+    <div class="search-box">
+      <input id="search-input" type="text" placeholder="Bạn có gì trong tủ lạnh? VD: thịt bò, tỏi...">
+      <button class="btn btn-primary" onclick="searchFood()">Tìm</button>
+    </div>
+    <p class="search-hint">Nhập nguyên liệu, cách nhau bằng dấu phẩy</p>
+    <div id="search-result"></div>
+  </div>
+
+  <!-- Vùng miền -->
+  <div id="region" class="page">
+    <div class="section-title">🗺️ Khám phá ẩm thực vùng miền</div>
+    <div class="filter-tabs" id="region-tabs">
+      <button class="active" onclick="loadRegion('bắc',this)">🏔️ Miền Bắc</button>
+      <button onclick="loadRegion('trung',this)">🏖️ Miền Trung</button>
+      <button onclick="loadRegion('nam',this)">🌴 Miền Nam</button>
+    </div>
+    <div class="region-count" id="region-count"></div>
+    <div id="region-result" class="card-grid"></div>
+  </div>
+
+  <!-- Thực đơn -->
+  <div id="menu" class="page">
+    <div class="section-title">📋 Thực đơn hôm nay</div>
+    <div id="menu-list"></div>
+  </div>
+
+  <!-- Lịch sử -->
+  <div id="history" class="page">
+    <div class="section-title">📅 Lịch sử tuần qua</div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- Quản lý -->
+  <div id="admin" class="page">
+    <div class="section-title">⚙ Quản lý món ăn</div>
+    <div class="admin-toolbar">
+      <div class="search-wrap">
+        <input id="adm-search" type="text" placeholder="Tìm tên món hoặc nguyên liệu..." oninput="onAdmInput()" autocomplete="off">
+        <div class="suggest-dropdown" id="adm-suggest"></div>
+      </div>
+      <select id="adm-region"><option value="">Tất cả vùng</option><option value="bắc">Miền Bắc</option><option value="trung">Miền Trung</option><option value="nam">Miền Nam</option></select>
+      <select id="adm-type"><option value="">Tất cả loại</option><option value="thịt">Món thịt</option><option value="rau">Món rau</option><option value="canh">Canh</option><option value="kèm">Món kèm</option><option value="xào">Món xào</option><option value="nộm">Nộm</option></select>
+      <button class="btn btn-primary" onclick="filterAdmin()">Tìm</button>
+      <button class="btn btn-primary" onclick="openFoodForm()">+ Thêm món</button>
+    </div>
+    <div class="admin-count" id="adm-count"></div>
+    <div id="adm-loading" style="display:none;text-align:center;padding:40px;color:#aaa">⏳ Đang tải...</div>
+    <div class="admin-grid" id="adm-grid"></div>
+    <div class="pagination" id="adm-paging"></div>
+  </div>
+
+  <!-- Popups -->
+  <div class="overlay" id="add-overlay" onclick="if(event.target===this)closeAddPopup()">
+    <div class="popup"><h3 id="popup-title"></h3><p>Thêm món này vào thực đơn hôm nay?</p>
+      <div class="btn-row"><button class="btn-ghost" onclick="closeAddPopup()">Không</button><button class="btn-primary" onclick="confirmAdd()">Thêm vào</button></div>
+    </div>
+  </div>
+  <div class="overlay" id="cook-overlay" onclick="if(event.target===this)closeCookPopup()">
+    <div class="cook-popup" id="cook-detail"></div>
+  </div>
+  <div class="form-overlay" id="form-overlay" onclick="if(event.target===this)closeFoodForm()">
+    <div class="food-form" id="food-form"></div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
