@@ -5,6 +5,79 @@ const PAGE_IDS = ["suggest", "search", "region", "menu", "history", "fridge", "a
 const ADM_PER_PAGE = 8;
 const LIST_PER_PAGE = 8;
 
+let currentUser = null;
+function getToken() { return localStorage.getItem("token"); }
+function authHeaders() { const t = getToken(); return t ? { "Authorization": "Bearer " + t, "Content-Type": "application/json" } : { "Content-Type": "application/json" }; }
+
+function updateAuthUI() {
+  const authEl = document.getElementById("nav-auth");
+  const userEl = document.getElementById("nav-user");
+  const adminTab = document.getElementById("nav-admin");
+  if (currentUser) {
+    authEl.style.display = "none";
+    userEl.style.display = "flex";
+    document.getElementById("nav-username").textContent = currentUser.displayName || currentUser.username;
+    adminTab.style.display = currentUser.role === "admin" ? "" : "none";
+  } else {
+    authEl.style.display = "flex";
+    userEl.style.display = "none";
+    adminTab.style.display = "none";
+  }
+}
+
+let authMode = "login";
+function showAuthModal(mode) {
+  authMode = mode || "login";
+  document.getElementById("auth-title").textContent = authMode === "login" ? "Đăng nhập" : "Đăng ký";
+  document.getElementById("auth-submit").textContent = authMode === "login" ? "Đăng nhập" : "Đăng ký";
+  document.getElementById("auth-name").style.display = authMode === "register" ? "" : "none";
+  document.getElementById("auth-switch").innerHTML = authMode === "login"
+    ? 'Chưa có tài khoản? <a href="#" onclick="toggleAuthMode(event)">Đăng ký</a>'
+    : 'Đã có tài khoản? <a href="#" onclick="toggleAuthMode(event)">Đăng nhập</a>';
+  document.getElementById("auth-error").textContent = "";
+  document.getElementById("auth-user").value = "";
+  document.getElementById("auth-pass").value = "";
+  document.getElementById("auth-name").value = "";
+  document.getElementById("auth-overlay").classList.add("show");
+}
+function closeAuthModal() { document.getElementById("auth-overlay").classList.remove("show"); }
+function toggleAuthMode(e) { e.preventDefault(); showAuthModal(authMode === "login" ? "register" : "login"); }
+
+async function submitAuth() {
+  const username = document.getElementById("auth-user").value.trim();
+  const password = document.getElementById("auth-pass").value;
+  const displayName = document.getElementById("auth-name").value.trim();
+  if (!username || !password) { document.getElementById("auth-error").textContent = "Nhập username và password"; return; }
+  try {
+    const url = authMode === "login" ? "/api/login" : "/api/register";
+    const body = authMode === "login" ? { username, password } : { username, password, displayName };
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (!r.ok) { document.getElementById("auth-error").textContent = d.error; return; }
+    localStorage.setItem("token", d.token);
+    currentUser = d.user;
+    updateAuthUI();
+    closeAuthModal();
+  } catch (e) { document.getElementById("auth-error").textContent = "Lỗi kết nối"; }
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  currentUser = null;
+  updateAuthUI();
+  showPage("suggest");
+}
+
+async function checkAuth() {
+  const token = getToken();
+  if (!token) { updateAuthUI(); return; }
+  try {
+    const r = await fetch("/api/me", { headers: { "Authorization": "Bearer " + token } });
+    if (r.ok) { currentUser = await r.json(); } else { localStorage.removeItem("token"); currentUser = null; }
+  } catch (e) { currentUser = null; }
+  updateAuthUI();
+}
+
 let todayMenu = JSON.parse(localStorage.getItem("todayMenu") || "[]");
 let pendingFood = null;
 let allFoods = [];
@@ -110,7 +183,10 @@ function showPage(id) {
   if (id === "menu") renderMenu();
   if (id === "history") renderHistory();
   if (id === "fridge") loadFridge();
-  if (id === "admin") loadAdmin();
+  if (id === "admin") {
+    if (!currentUser || currentUser.role !== "admin") { alert("Chỉ admin mới truy cập được"); showPage("suggest"); return; }
+    loadAdmin();
+  }
 }
 
 // ========== History ==========
@@ -135,7 +211,7 @@ function renderHistory() {
 
 // ========== Suggest / Search / Region ==========
 async function suggest() {
-  const r = await fetch("/api/suggest"); const d = await r.json();
+  const r = await fetch("/api/suggest", { headers: authHeaders() }); const d = await r.json();
   const section = (title, items) => items.filter(Boolean).length ? `<div class="suggest-section"><h3 class="suggest-group-title">${title}</h3><div class="card-grid">${items.filter(Boolean).map(m => renderCard(m)).join("")}</div></div>` : "";
   document.getElementById("suggest-result").innerHTML = section("🥩 Món thịt", d.meat) + section("🍲 Canh", d.soup) + section("🥬 Món rau", d.veg);
 }
@@ -291,7 +367,7 @@ function previewImg(input) {
 }
 async function uploadImage() {
   if (!uploadedImageUrl || !uploadedImageUrl.startsWith("data:")) return uploadedImageUrl;
-  const r = await fetch("/api/upload", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: uploadedImageUrl, filename: "food.jpg" }) });
+  const r = await fetch("/api/upload", { method: "POST", headers: authHeaders(), body: JSON.stringify({ data: uploadedImageUrl, filename: "food.jpg" }) });
   return (await r.json()).url || "";
 }
 async function saveFoodForm() {
@@ -310,19 +386,20 @@ async function saveFoodForm() {
     cookTime: parseInt(document.getElementById("ff-time").value) || 20,
     steps: document.getElementById("ff-steps").value.split("\n").map(s => s.trim()).filter(Boolean),
     image: imageUrl };
-  if (editingId) await fetch("/api/foods/" + editingId, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  else await fetch("/api/foods", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (editingId) await fetch("/api/foods/" + editingId, { method: "PUT", headers: authHeaders(), body: JSON.stringify(body) });
+  else await fetch("/api/foods", { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
   closeFoodForm(); loadAdmin();
 }
 function editFood(id) { const f = allFoods.find(x => fid(x) === id); if (f) openFoodForm(f); }
 function viewFood(id) { const f = allFoods.find(x => fid(x) === id); if (f) showCook(f); }
-async function deleteFood(id) { if (!confirm("Xoá món này?")) return; await fetch("/api/foods/" + id, { method: "DELETE" }); loadAdmin(); }
+async function deleteFood(id) { if (!confirm("Xoá món này?")) return; await fetch("/api/foods/" + id, { method: "DELETE", headers: authHeaders() }); loadAdmin(); }
 
 // ========== Fridge ==========
 let fridgeItems = [];
 
 async function loadFridge() {
-  try { const r = await fetch("/api/fridge"); fridgeItems = await r.json(); } catch (e) { fridgeItems = []; }
+  if (!currentUser) { document.getElementById("fridge-list").innerHTML = '<p class="menu-empty">Đăng nhập để sử dụng tủ lạnh</p>'; return; }
+  try { const r = await fetch("/api/fridge", { headers: authHeaders() }); fridgeItems = await r.json(); } catch (e) { fridgeItems = []; }
   renderFridge();
 }
 
@@ -353,13 +430,13 @@ async function addFridgeItem() {
   if (!raw) return;
   const names = raw.split(/[,，]/).map(s => s.trim()).filter(Boolean);
   const items = names.map(n => ({ name: n, quantity: names.length === 1 ? qty : "" }));
-  await fetch("/api/fridge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items }) });
+  await fetch("/api/fridge", { method: "POST", headers: authHeaders(), body: JSON.stringify({ items }) });
   nameInput.value = ""; qtyInput.value = "";
   loadFridge();
 }
 
 async function removeFridgeItem(id) {
-  await fetch("/api/fridge/" + id, { method: "DELETE" });
+  await fetch("/api/fridge/" + id, { method: "DELETE", headers: authHeaders() });
   loadFridge();
 }
 
@@ -375,6 +452,7 @@ async function suggestFromFridge() {
 document.getElementById("fridge-name").addEventListener("keydown", e => { if (e.key === "Enter") addFridgeItem(); });
 
 // ========== Init ==========
+checkAuth();
 updateMenuCount();
 fetch("/api/foods").then(r => r.json()).then(d => { allFoods = Array.isArray(d) ? d : []; }).catch(() => {});
 
