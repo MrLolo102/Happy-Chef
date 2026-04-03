@@ -6,7 +6,6 @@ const app = express();
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const apiRoutes = require("./routes/api");
 app.use("/api", apiRoutes);

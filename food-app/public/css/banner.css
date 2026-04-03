@@ -1,0 +1,20 @@
+.banner { background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 50%, #81C784 100%); border-radius: 16px; padding: clamp(32px, 5vw, 56px) clamp(24px, 4vw, 40px); color: white; margin-bottom: 32px; position: relative; overflow: hidden; }
+.banner::before { content: ''; position: absolute; right: -50px; top: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.07); border-radius: 50%; }
+.banner::after { content: ''; position: absolute; right: 80px; bottom: -60px; width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+.banner h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 8px; font-weight: 700; position: relative; }
+.banner p { font-size: clamp(0.85rem, 2vw, 1rem); opacity: 0.9; margin-bottom: 20px; font-weight: 300; position: relative; }
+.banner .emoji { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); font-size: 4rem; opacity: 0.12; pointer-events: none; }
+
+.suggest-btn { background: #fff; color: #4CAF50; border: 2px solid #fff; padding: 12px 36px; font-size: 0.95rem; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.25s ease; text-transform: uppercase; letter-spacing: 0.5px; position: relative; }
+.suggest-btn:hover { background: transparent; color: #fff; border-color: #fff; }
+.suggest-btn:active { transform: scale(0.97); }
+#suggest-result { margin-top: 20px; }
+.suggest-section { margin-bottom: 28px; }
+.suggest-group-title { font-size: 0.95rem; color: #4CAF50; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #E8F5E9; font-weight: 600; }
+
+.categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 12px; margin-bottom: 32px; max-width: 700px; margin-left: auto; margin-right: auto; }
+.cat-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; padding: 8px 4px; border-radius: 12px; transition: all 0.2s ease; }
+.cat-item:hover, .cat-item:focus-visible { transform: translateY(-2px); background: rgba(76,175,80,0.04); }
+.cat-item .cat-icon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; border: 2px solid #e0e0e0; transition: all 0.2s ease; }
+.cat-item:hover .cat-icon { border-color: #4CAF50; background: #E8F5E9; }
+.cat-item .cat-label { font-size: 0.7rem; color: #666; font-weight: 500; text-align: center; }

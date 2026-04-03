@@ -1,0 +1,14 @@
+.menu-empty { color: #bbb; font-size: 0.95rem; margin-top: 32px; text-align: center; }
+.menu-item { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 14px; transition: box-shadow 0.2s; }
+.menu-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.menu-item .info h3 { font-size: 0.95rem; margin-bottom: 2px; font-weight: 600; }
+.menu-item .info .ingredients { font-size: 0.78rem; color: #aaa; }
+.menu-item .actions { display: flex; gap: 6px; flex-shrink: 0; }
+.menu-item .actions button { padding: 7px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.78rem; font-weight: 600; }
+
+.history-day { margin-bottom: 24px; }
+.history-day .day-header { font-size: 0.95rem; color: #4CAF50; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #E8F5E9; display: flex; justify-content: space-between; font-weight: 600; }
+.history-day .day-header .day-date { color: #bbb; font-size: 0.8rem; font-weight: 400; }
+.history-day .day-items { display: flex; gap: 8px; flex-wrap: wrap; }
+.history-day .day-item { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+.history-day .day-item button { background: #E8F5E9; color: #4CAF50; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: 600; }

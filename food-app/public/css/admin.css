@@ -1,0 +1,32 @@
+.admin-toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.admin-toolbar input { background: #fff; border: 1px solid #ddd; color: #333; padding: 10px 16px; border-radius: 8px; font-size: 0.85rem; min-width: 200px; transition: border-color 0.2s, box-shadow 0.2s; }
+.admin-toolbar input:focus { border-color: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); }
+.admin-toolbar select { background: #fff; border: 1px solid #ddd; color: #555; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; }
+.search-wrap { position: relative; min-width: 240px; flex: 1; }
+.suggest-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; z-index: 50; display: none; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+.suggest-dropdown.show { display: block; }
+.suggest-dropdown .sg-item { padding: 10px 16px; cursor: pointer; font-size: 0.82rem; border-bottom: 1px solid #f5f5f5; transition: background 0.15s; }
+.suggest-dropdown .sg-item:hover { background: #E8F5E9; }
+.suggest-dropdown .sg-item .sg-name { color: #333; font-weight: 500; }
+.suggest-dropdown .sg-item .sg-ing { color: #aaa; font-size: 0.75rem; }
+.admin-count { color: #888; font-size: 0.85rem; margin-bottom: 14px; }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.admin-card { background: #fff; border: 1px solid #eee; border-radius: 12px; overflow: hidden; transition: all 0.25s ease; }
+.admin-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.admin-card img { width: 100%; height: 140px; object-fit: cover; display: block; background: #f5f5f5; }
+.admin-card-body { padding: 12px 14px; }
+.admin-card-body h4 { font-size: 0.85rem; margin-bottom: 3px; font-weight: 600; }
+.admin-card-body .ameta { font-size: 0.75rem; color: #aaa; margin-bottom: 8px; }
+.admin-card-body .abtns { display: flex; gap: 5px; }
+.admin-card-body .abtns button { padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
+
+.food-form { background: #fff; border-radius: 16px; padding: 28px; max-width: 500px; width: 92%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); animation: popupIn 0.25s ease; }
+.food-form h3 { font-family: 'Playfair Display', serif; color: #4CAF50; margin-bottom: 16px; font-size: 1.2rem; }
+.food-form label { display: block; color: #4CAF50; font-size: 0.7rem; margin-bottom: 4px; margin-top: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.food-form input, .food-form select, .food-form textarea { width: 100%; background: #fff; border: 1px solid #ddd; color: #333; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; transition: border-color 0.2s, box-shadow 0.2s; }
+.food-form input:focus, .food-form select:focus, .food-form textarea:focus { border-color: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); outline: none; }
+.food-form textarea { resize: vertical; min-height: 80px; }
+.food-form .img-preview { width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
+.food-form .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.food-form .form-actions button { padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.food-form .err { color: #e53935; font-size: 0.78rem; margin-top: 4px; display: none; }

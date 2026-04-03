@@ -1,0 +1,40 @@
+@media (max-width: 768px) {
+  nav .tabs { display: none; }
+  nav .logo { margin-right: auto; }
+  body { padding-bottom: 72px; }
+  .mobile-nav { display: grid; }
+  .banner { border-radius: 0; margin: -20px -16px 24px; }
+  .banner .emoji { display: none; }
+  .categories { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cat-item .cat-icon { width: 44px; height: 44px; font-size: 1.2rem; }
+  .cat-item .cat-label { font-size: 0.65rem; }
+  .card-grid, #search-result, .admin-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .card-img { height: 130px; }
+  .card-body { padding: 10px 12px; }
+  .card h3 { font-size: 0.82rem; }
+  .admin-toolbar { gap: 6px; }
+  .admin-toolbar input, .search-wrap { min-width: 100%; }
+  .admin-toolbar select { flex: 1; min-width: 0; }
+  .filter-tabs button { padding: 8px 16px; font-size: 0.75rem; }
+  .cook-popup { width: 95%; }
+  .cook-popup .cook-img { height: 160px; }
+  .menu-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .menu-item .actions { width: 100%; }
+  .fridge-add { flex-direction: column; }
+  .fridge-item { min-width: 100%; }
+}
+
+@media (max-width: 380px) {
+  .categories { grid-template-columns: repeat(4, 1fr); }
+  .card-grid, #search-result, .admin-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+}
+
+@media print {
+  nav, header, .mobile-nav, .banner, .categories, .pagination, .btn, .overlay, .form-overlay { display: none; }
+  .page { display: block; padding: 0; }
+  body { background: #fff; padding: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms; transition-duration: 0.01ms; }
+}
