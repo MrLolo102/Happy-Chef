@@ -47,10 +47,18 @@ router.get("/suggest", async (req, res) => {
       } catch (e) {}
     }
 
-    const main = foods.filter(f => f.category === "thịt");
-    const veg = foods.filter(f => ["rau", "xào", "nộm"].includes(f.category));
-    const soup = foods.filter(f => f.category === "canh");
-    const side = foods.filter(f => f.category === "kèm");
+    let main = foods.filter(f => f.category === "thịt");
+    let veg = foods.filter(f => ["rau", "xào", "nộm"].includes(f.category));
+    let soup = foods.filter(f => f.category === "canh");
+    let side = foods.filter(f => f.category === "kèm");
+
+    // Fallback nếu chưa migrate category
+    if (!main.length && !veg.length && !soup.length) {
+      main = foods.filter(f => f.nutrition.some(n => ["protein","fat","iron","omega3"].includes(n)) && !f.tags.includes("canh") && !f.tags.includes("rau") && !f.tags.includes("kèm"));
+      veg = foods.filter(f => f.tags.some(t => ["rau","xào","nộm"].includes(t)) && !f.tags.includes("canh"));
+      soup = foods.filter(f => f.tags.includes("canh"));
+      side = foods.filter(f => f.tags.includes("kèm"));
+    }
 
     const score = (f) => f.ingredients.filter(i => fridgeNames.some(fn => i.toLowerCase().includes(fn) || fn.includes(i.toLowerCase()))).length;
     const pickN = (arr, n) => {
