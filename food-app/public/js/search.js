@@ -69,3 +69,32 @@ export function initSearch() {
     if (e.key === "Enter") searchFood();
   });
 }
+
+export function browseByFilter(type, allFoods) {
+  let filtered;
+  let label;
+  if (type === "nhanh") {
+    filtered = allFoods.filter(f => f.cookTime <= 15);
+    label = "Món nấu nhanh (≤15 phút)";
+  } else if (type === "chay") {
+    filtered = allFoods.filter(f => f.isVegetarian);
+    label = "Món chay";
+  } else if (type === "thịt") {
+    filtered = allFoods.filter(f => f.category === "thịt" || (f.nutrition && f.nutrition.some(n => ["protein","fat","iron","omega3"].includes(n)) && !f.tags.includes("canh") && !f.tags.includes("rau") && !f.tags.includes("kèm")));
+    label = "Món thịt";
+  } else {
+    filtered = allFoods.filter(f => f.category === type || f.tags.includes(type));
+    label = type.charAt(0).toUpperCase() + type.slice(1);
+  }
+  searchItems = filtered;
+  searchPage = 1;
+  document.getElementById("search-input").value = "";
+  if (!filtered.length) {
+    document.getElementById("search-count").textContent = `Không tìm thấy món ${label}`;
+    document.getElementById("search-result").innerHTML = "";
+    document.getElementById("search-paging").innerHTML = "";
+    return;
+  }
+  renderSearchPage();
+  document.getElementById("search-count").textContent = `${label} · ${filtered.length} món`;
+}

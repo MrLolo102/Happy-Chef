@@ -4,7 +4,7 @@ import { DEFAULT_IMG } from "./config.js";
 import { checkAuth, showAuthModal, closeAuthModal, toggleAuthMode, submitAuth, logout, updateAuthUI } from "./auth.js";
 import { updateMenuCount, renderMenu, removeFromMenu, saveMenu, addToHistory, renderHistory } from "./menu.js";
 import { suggest } from "./suggest.js";
-import { searchFood, goSearchPage, loadRegion, goRegionPage, initSearch } from "./search.js";
+import { searchFood, goSearchPage, loadRegion, goRegionPage, initSearch, browseByFilter } from "./search.js";
 import { loadFridge, addFridgeItem, removeFridgeItem, suggestFromFridge, initFridge } from "./fridge.js";
 import { loadAdmin, filterAdmin, goAdmPage, onAdmInput, pickSuggest, hideAdmSuggest, openFoodForm, closeFoodForm, onCategoryChange, previewImg, saveFoodForm, editFood, deleteFood, initAdmin } from "./admin.js";
 
@@ -73,11 +73,8 @@ function viewFood(id) { const f = state.allFoods.find(x => fid(x) === id); if (f
 
 // ========== Quick filter ==========
 function quickFilter(type) {
-  showPage("admin");
-  const reset = () => { document.getElementById("adm-search").value = ""; document.getElementById("adm-region").value = ""; document.getElementById("adm-type").value = ""; };
-  if (type === "nhanh") { reset(); filterAdmin(); /* will be overridden below */ }
-  else if (type === "chay") { reset(); filterAdmin(); }
-  else { reset(); document.getElementById("adm-type").value = type; filterAdmin(); }
+  showPage("search");
+  browseByFilter(type, state.allFoods);
 }
 
 // ========== Bridge: expose functions to inline onclick handlers ==========
