@@ -125,6 +125,7 @@ function renderCard(m, label) {
     <div class="meta">${m.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
     <div class="time">⏱ ${m.cookTime} phút</div>
     ${m.region ? `<span class="region-badge">${REGION_NAMES[m.region] || m.region}</span>` : ""}
+    ${m.subCategory ? `<span class="sub-badge">${m.subCategory}</span>` : ""}
     </div></div>`;
 }
 
@@ -213,7 +214,7 @@ function renderHistory() {
 async function suggest() {
   const r = await fetch("/api/suggest", { headers: authHeaders() }); const d = await r.json();
   const section = (title, items) => items.filter(Boolean).length ? `<div class="suggest-section"><h3 class="suggest-group-title">${title}</h3><div class="card-grid">${items.filter(Boolean).map(m => renderCard(m)).join("")}</div></div>` : "";
-  document.getElementById("suggest-result").innerHTML = section("🥩 Món thịt", d.meat) + section("🍲 Canh", d.soup) + section("🥬 Món rau", d.veg);
+  document.getElementById("suggest-result").innerHTML = section("🥩 Món thịt", d.meat) + section("🍲 Canh", d.soup) + section("🥬 Món rau", d.veg) + section("🍢 Món kèm", d.side);
 }
 async function searchFood() {
   const q = document.getElementById("search-input").value.trim(); if (!q) return;
@@ -349,6 +350,12 @@ function openFoodForm(food) {
     <label>Dinh dưỡng (phẩy)</label><input id="ff-nut" value="${f.nutrition ? f.nutrition.join(", ") : ""}" placeholder="protein, fat">
     <label>Vùng miền</label>
     <select id="ff-region"><option value="bắc" ${f.region === "bắc" ? "selected" : ""}>Miền Bắc</option><option value="trung" ${f.region === "trung" ? "selected" : ""}>Miền Trung</option><option value="nam" ${f.region === "nam" ? "selected" : ""}>Miền Nam</option></select>
+    <label>Danh mục</label>
+    <select id="ff-category" onchange="onCategoryChange()"><option value="thịt" ${f.category === "thịt" ? "selected" : ""}>Thịt</option><option value="rau" ${f.category === "rau" ? "selected" : ""}>Rau</option><option value="canh" ${f.category === "canh" ? "selected" : ""}>Canh</option><option value="kèm" ${f.category === "kèm" ? "selected" : ""}>Kèm</option><option value="xào" ${f.category === "xào" ? "selected" : ""}>Xào</option><option value="nộm" ${f.category === "nộm" ? "selected" : ""}>Nộm</option><option value="khác" ${f.category === "khác" ? "selected" : ""}>Khác</option></select>
+    <div id="ff-sub-wrap" style="${f.category === "thịt" ? "" : "display:none"}">
+      <label>Loại thịt</label>
+      <select id="ff-subCategory"><option value="lợn" ${f.subCategory === "lợn" ? "selected" : ""}>Lợn</option><option value="bò" ${f.subCategory === "bò" ? "selected" : ""}>Bò</option><option value="gà" ${f.subCategory === "gà" ? "selected" : ""}>Gà</option><option value="cá" ${f.subCategory === "cá" ? "selected" : ""}>Cá</option><option value="tôm" ${f.subCategory === "tôm" ? "selected" : ""}>Tôm</option><option value="vịt" ${f.subCategory === "vịt" ? "selected" : ""}>Vịt</option><option value="hải sản" ${f.subCategory === "hải sản" ? "selected" : ""}>Hải sản</option><option value="khác" ${f.subCategory === "khác" || !f.subCategory ? "selected" : ""}>Khác</option></select>
+    </div>
     <label>Món chay?</label>
     <select id="ff-veg"><option value="false" ${f.isVegetarian ? "" : "selected"}>Không</option><option value="true" ${f.isVegetarian ? "selected" : ""}>Có</option></select>
     <label>Thời gian nấu (phút)</label><input id="ff-time" type="number" value="${f.cookTime || 20}" min="1">
@@ -359,6 +366,10 @@ function openFoodForm(food) {
   document.getElementById("form-overlay").classList.add("show");
 }
 function closeFoodForm() { document.getElementById("form-overlay").classList.remove("show"); editingId = null; uploadedImageUrl = ""; }
+function onCategoryChange() {
+  const cat = document.getElementById("ff-category").value;
+  document.getElementById("ff-sub-wrap").style.display = cat === "thịt" ? "" : "none";
+}
 function previewImg(input) {
   const file = input.files[0]; if (!file) return;
   const r = new FileReader();
@@ -382,6 +393,8 @@ async function saveFoodForm() {
     tags: document.getElementById("ff-tags").value.split(",").map(s => s.trim()).filter(Boolean),
     nutrition: document.getElementById("ff-nut").value.split(",").map(s => s.trim()).filter(Boolean),
     region: document.getElementById("ff-region").value,
+    category: document.getElementById("ff-category").value,
+    subCategory: document.getElementById("ff-category").value === "thịt" ? document.getElementById("ff-subCategory").value : "",
     isVegetarian: document.getElementById("ff-veg").value === "true",
     cookTime: parseInt(document.getElementById("ff-time").value) || 20,
     steps: document.getElementById("ff-steps").value.split("\n").map(s => s.trim()).filter(Boolean),

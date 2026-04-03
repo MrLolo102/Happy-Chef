@@ -65,6 +65,7 @@ nav .tabs button.active { color: #4CAF50; border-bottom-color: #4CAF50; }
 .card .time { font-size: 0.8rem; color: #aaa; margin-top: 8px; }
 .card .label { font-size: 0.7rem; color: #FF9800; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
 .card .region-badge { font-size: 0.65rem; background: #FFF8E1; color: #F57F17; padding: 3px 10px; border-radius: 2px; display: inline-block; margin-top: 6px; font-weight: 500; }
+.card .sub-badge { font-size: 0.65rem; background: #E8F5E9; color: #2E7D32; padding: 3px 10px; border-radius: 2px; display: inline-block; margin-top: 6px; margin-left: 4px; font-weight: 500; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
 /* === Search === */

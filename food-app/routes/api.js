@@ -47,9 +47,10 @@ router.get("/suggest", async (req, res) => {
       } catch (e) {}
     }
 
-    const main = foods.filter(f => f.nutrition.includes("protein") && !f.tags.includes("canh") && !f.tags.includes("rau") && !f.tags.includes("kèm") && !f.tags.includes("nộm"));
-    const veg = foods.filter(f => f.tags.some(t => ["rau", "xào"].includes(t)) && f.nutrition.some(n => ["fiber", "vitamin", "vitamin A"].includes(n)));
-    const soup = foods.filter(f => f.tags.includes("canh") || f.tags.includes("kèm"));
+    const main = foods.filter(f => f.category === "thịt");
+    const veg = foods.filter(f => ["rau", "xào", "nộm"].includes(f.category));
+    const soup = foods.filter(f => f.category === "canh");
+    const side = foods.filter(f => f.category === "kèm");
 
     const score = (f) => f.ingredients.filter(i => fridgeNames.some(fn => i.toLowerCase().includes(fn) || fn.includes(i.toLowerCase()))).length;
     const pickN = (arr, n) => {
@@ -57,7 +58,7 @@ router.get("/suggest", async (req, res) => {
       return arr.map(f => ({ ...f, _score: score(f) })).sort((a, b) => b._score - a._score || Math.random() - 0.5).slice(0, n);
     };
 
-    res.json({ meat: pickN(main, 3), soup: pickN(soup, 2), veg: pickN(veg, 3) });
+    res.json({ meat: pickN(main, 3), soup: pickN(soup, 2), veg: pickN(veg, 2), side: pickN(side, 1) });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

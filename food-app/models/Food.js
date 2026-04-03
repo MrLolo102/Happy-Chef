@@ -5,6 +5,8 @@ const foodSchema = new mongoose.Schema({
   ingredients: [String],
   tags: [String],
   nutrition: [String],
+  category: { type: String, enum: ["thịt", "rau", "canh", "kèm", "xào", "nộm", "khác"], default: "khác" },
+  subCategory: { type: String, default: "" }, // lợn, bò, gà, cá, tôm, vịt, hải sản...
   isVegetarian: { type: Boolean, default: false },
   cookTime: { type: Number, default: 20 },
   steps: [String],
